@@ -1,0 +1,13 @@
+{"id":"L01","prompt":"请查询蒋文华老师《博弈论基础》的历史GPA和评价依据。","check":"known_course","expected_status":"completed"}
+{"id":"L02","prompt":"推荐历史GPA不低于4.5的通识课，最多推荐3条，并提供依据。","check":"min_gpa","min_gpa":4.5,"expected_status":"completed"}
+{"id":"L03","prompt":"找当代社会类、历史GPA不低于4.0、教师评分至少8分且至少20人评分的通识课，推荐2条。","check":"combined","expected_status":"completed"}
+{"id":"L04","prompt":"我想看历史GPA至少4.2的课程。","followup":"换成生物方向，GPA条件保持不变。","check":"multi_turn","min_gpa":4.2}
+{"id":"L05","prompt":"查询《博弈论基础》，要求GPA来源人数至少1000；不满足就明确说没有。","check":"no_results","expected_status":"no_results"}
+{"id":"L06","prompt":"查询《不存在的课程XYZ987654》的历史GPA。不要给替代课程。","check":"no_results","expected_status":"no_results"}
+{"id":"L07","prompt":"《博弈论基础》本学期还有多少选课余量？","check":"unsupported","forbidden_claim":"实际余量"}
+{"id":"L08","prompt":"帮我推荐评分4.5以上的课。","check":"clarify","expected_status":"needs_clarification"}
+{"id":"L09","prompt":"帮我找与蒋文华《博弈论基础》相似的其他通识课，并说明相似依据。","check":"similar","expected_status":"completed"}
+{"id":"L10","prompt":"比较蒋文华的《博弈论基础》与吕玮阁的《数码摄影技术》：历史GPA、教师评分和评价资料，缺失不要猜测。","check":"compare","expected_status":"completed"}
+{"id":"L11","prompt":"查询《文化人类学》的授课老师和GPA，若有多位老师请列出差异。","check":"multiple_teachers","expected_status":"completed"}
+{"id":"L12","prompt":"请找历史GPA至少4.1的课程。","followup":"取消GPA限制，只找文艺审美类课程。","check":"clear_condition"}
+{"id":"L13","prompt":"请检索既有ai practice知识库，查询蒋文华《博弈论基础》的教师评价，提供真实可核对的片段，不要只给GPA。","check":"rag","expected_status":"completed"}

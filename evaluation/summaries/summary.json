@@ -1,0 +1,15 @@
+{
+  "run_id": "20261102-110059-598d5",
+  "execution": "live_enabled_no_mock",
+  "cases": 13,
+  "passed": 10,
+  "cases_with_real_model_calls": 12,
+  "total_model_calls": 29,
+  "cases_using_verified_template": 1,
+  "verified_template_turns": 1,
+  "structured_data_turns": 5,
+  "success_rate": 0.7692307692307693,
+  "data_version": "b96e20e26eaa8d38",
+  "mean_duration_ms": 8892.153846153846,
+  "human_review": "Narrative relevance and faithfulness require separate inspection; automated pass is not human approval."
+}

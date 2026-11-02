@@ -1,0 +1,279 @@
+.app-header {
+  padding: 0 32px;
+  height: 90px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 251, 255, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.header-logo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.header-icon {
+  font-size: 28px;
+  color: white;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.header-title {
+  margin: 0 !important;
+  font-family: '"LXGW WenKai", "Noto Sans SC", "HarmonyOS Sans", "Microsoft YaHei", "Arial", sans-serif';
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 60%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+}
+
+.header-subtitle-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.header-subtitle-main {
+  font-family: '"LXGW WenKai", "Noto Sans SC", "HarmonyOS Sans", "Microsoft YaHei", "Arial", sans-serif';
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4a5568;
+  line-height: 1.2;
+}
+
+.header-subtitle-secondary {
+  font-family: '"Inter", "Segoe UI", "Roboto", sans-serif';
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #718096;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.header-version {
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.header-data-source {
+  margin-top: 2px;
+}
+
+.data-source-text {
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 500;
+  margin: 0;
+}
+
+.header-links {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.header-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.header-link:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.header-github {
+  font-size: 18px;
+  color: #667eea;
+  transition: color 0.3s ease;
+}
+
+.header-link:hover .header-github {
+  color: #5a67d8;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .app-header {
+    padding: 0 24px;
+    height: 80px;
+  }
+
+  .header-title {
+    font-size: 1.8rem;
+  }
+
+  .header-subtitle-main {
+    font-size: 1rem;
+  }
+
+  .header-subtitle-secondary {
+    font-size: 0.8rem;
+  }
+
+  .header-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .header-icon {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 16px;
+    height: 70px;
+  }
+
+  .header-content {
+    gap: 16px;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+
+  .header-subtitle-main {
+    font-size: 0.9rem;
+  }
+
+  .header-subtitle-secondary {
+    display: none;
+  }
+
+  .header-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .header-icon {
+    font-size: 22px;
+  }
+
+  .header-info {
+    gap: 2px;
+  }
+
+  .data-source-text {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0 12px;
+    height: 65px;
+  }
+
+  .header-title {
+    font-size: 1.3rem;
+  }
+
+  .header-subtitle-main {
+    font-size: 0.8rem;
+  }
+
+  .header-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .header-icon {
+    font-size: 20px;
+  }
+
+  .header-badge {
+    padding: 3px 8px;
+  }
+
+  .header-version {
+    font-size: 0.7rem;
+  }
+
+  .data-source-text {
+    font-size: 0.65rem;
+  }
+
+  .header-link {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-github {
+    font-size: 16px;
+  }
+}
