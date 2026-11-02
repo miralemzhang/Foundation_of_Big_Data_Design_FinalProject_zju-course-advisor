@@ -57,10 +57,12 @@ def test_tool_whitelist_and_loop_limit(env):
     p.cloud=FakeCloud([tool('run_shell',{})]*6);r=p.run('test','u')
     assert r['status']=='failed' and r['error']['code']=='step_limit'
 
-def test_placeholder_citation_is_rejected(env):
+def test_placeholder_citation_is_removed_without_blocking_answer(env):
     c,m,logs=env;bad=answer();bad['content']=json.dumps({'status':'completed','answer':'相似依据[相似度证据ID]','course_ids':[],'evidence_ids':[]})
     p=Pipeline(c,m,FakeCloud([bad,bad]),logs.append)
-    assert p.run('查依据','u')['error']['code']=='verification_failed'
+    result=p.run('查依据','u')
+    assert result['status']=='completed' and result['evidence']==[]
+    assert '[相似度证据ID]' not in result['answer'] and result['model_call_count']==1
 
 def test_numeric_evidence_is_real_and_inline_whitespace_normalized(env):
     c,m,logs=env;oid=c.search('策略博弈入门（示例）')['results'][0]['offering_id']
@@ -74,7 +76,8 @@ def test_same_course_multiple_teachers_not_counted_as_distinct_courses(env):
     bad=answer(ids);bad['content']=json.dumps({'status':'completed','answer':'这2门课程都可参考。','course_ids':ids,'evidence_ids':[]})
     p=Pipeline(c,m,FakeCloud([tool('search_courses',{'query':'文化观察（示例）'}),bad,bad]),logs.append)
     result=p.run('查询文化观察（示例）','u')
-    assert result['status']=='completed' and result['answer_mode']=='verified_template'
+    assert result['status']=='completed' and result['answer_mode']=='structured_data'
+    assert result['model_call_count']==2
     assert '2条课程—教师记录，涉及1个课程名称' in result['answer']
 
 def test_ambiguous_rating_does_not_guess_a_scale_or_call_cloud(env):
@@ -198,3 +201,54 @@ def test_prose_cannot_bypass_course_id_verification(env):
     c,m,logs=env;bad={'role':'assistant','content':'你好！{"status":"completed","answer":"课程","course_ids":["invented"],"evidence_ids":[]}'}
     r=Pipeline(c,m,FakeCloud([bad,bad]),logs.append).run('你好','u')
     assert r['status']=='failed' and r['error']['code']=='verification_failed'
+
+
+@pytest.mark.parametrize('with_metadata',[False,True])
+def test_teacher_summary_reuses_subject_and_accepts_natural_prose(env,with_metadata):
+    c,m,logs=env;s=m.new_session('u')
+    courses=c.search('示例教师乙')['results']
+    s.update(filters={'min_gpa':4.1},query='示例教师乙',
+             last_courses=[{k:row[k] for k in ['offering_id','course_name','teacher']} for row in courses],
+             messages=[{'role':'user','content':'看看示例教师乙的课程'}])
+    m.save_session(s)
+    oid=courses[0]['offering_id']
+    detail=c.evidence(oid,limit=20)
+    ref=next(e['evidence_id'] for e in detail['evidence'] if e['kind']=='comment')
+    prose='示例教师乙的评价可以从教学风格和课堂体验来看。[教学风格]'
+    if with_metadata:
+        prose+='\n'+json.dumps({'status':'completed','course_ids':[oid],'evidence_ids':[ref]})
+    class InspectCloud(FakeCloud):
+        def chat(self,messages,*args,**kwargs):
+            context=messages[0]['content']
+            assert 'followup_evidence' in context and ref in context
+            assert any(e['kind']=='comment' for e in detail['evidence'])
+            return super().chat(messages,*args,**kwargs)
+    r=Pipeline(c,m,InspectCloud([{'role':'assistant','content':prose}]),logs.append).run('你总结一下大家对示例教师乙的评价啊','u',s['session_id'])
+    assert r['status']=='completed' and r['model_call_count']==1
+    assert r['answer']=='示例教师乙的评价可以从教学风格和课堂体验来看。[教学风格]'
+    assert any(e.get('kind')=='comment' for e in r['evidence'])
+    assert r['tool_calls'][0]['origin']=='context'
+    assert r['effective_constraints']=={'min_gpa':4.1}
+    assert not any(e['event']=='verification_failed' for e in logs)
+
+
+def test_tool_backed_prose_and_stale_citation_do_not_block_summary(env):
+    c,m,logs=env;oid=c.search('策略博弈入门（示例）')['results'][0]['offering_id']
+    cloud=FakeCloud([tool('get_course_evidence',{'offering_id':oid,'use_knowledge':False}),
+                     {'role':'assistant','content':'评论中有不同看法，可结合自己的偏好阅读。[E999]'}])
+    r=Pipeline(c,m,cloud,logs.append).run('总结评价','u')
+    assert r['status']=='completed' and r['model_call_count']==2
+    assert '[E999]' not in r['answer'] and r['evidence']
+
+
+
+def test_different_named_teacher_does_not_reuse_previous_teacher(env):
+    c,m,logs=env;s=m.new_session('u');row=c.search('示例教师乙')['results'][0]
+    s.update(last_courses=[{k:row[k] for k in ['offering_id','course_name','teacher']}],messages=[{'role':'user','content':'查示例教师乙'}])
+    m.save_session(s)
+    class InspectCloud(FakeCloud):
+        def chat(self,messages,*args,**kwargs):
+            assert '"followup_evidence"' not in messages[0]['content']
+            return super().chat(messages,*args,**kwargs)
+    r=Pipeline(c,m,InspectCloud([answer()]),logs.append).run('总结一下叶老师的评价','u',s['session_id'])
+    assert r['tool_calls']==[]
